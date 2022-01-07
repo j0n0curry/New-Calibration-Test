@@ -69,6 +69,8 @@ def main():
         comp['FAM_RFU'] = comp['FAM_RFU'].astype('float').astype('Int32')
         comp['VIC_RFU'] = comp['VIC_RFU'].astype('float').astype('Int32')
         comp['ROX_RFU'] = comp['ROX_RFU'].astype('float').astype('Int32')
+        comp['Run_ID'] = comp['Run_ID'].astype(int, errors = 'ignore')
+        comp.sort_values('Run_ID')
         #will remove this function - to the bottom - allow files to be processed and user defined and downloaed as whole set and analysed sets. 
         
         #process file attributes in to parameters for QC. Essential information. 
@@ -348,10 +350,10 @@ def main():
         st.plotly_chart(fig2b, use_container_width=True)
     
     
-    detect = comp.groupby(['Run_ID', 'Detection'])['Detection'].count().T
+    detect = comp.groupby(['Run_ID', 'Detection'])['Detection'].count()
+    detect = detect.transpose()
     
     
-    print(detect)
     
     
     
@@ -362,9 +364,11 @@ def main():
     
     def ctrl_view(comp):
         
+        comp['Run_ID'] = comp['Run_ID'].astype(str)
         figdt = px.scatter(comp, x='Run_ID', y='norm_N_Cov', color = 'Result')
         figdt.update_yaxes(range=[0, 2      ])
         figdt.update_traces(marker_size=3)
+        
         figdt.add_trace(go.Scatter(
             y=[1.3, 1.3],
             x=[comp['Run_ID'].min(), comp['Run_ID'].max()],
@@ -552,6 +556,9 @@ def main():
     testdf = comp[(comp.control == 'A1500')]
     
     ctrl_view(comp)
+    
+    st.dataframe(detect)
+    
     
     
     FAM_data = stats_FAM(comp)
