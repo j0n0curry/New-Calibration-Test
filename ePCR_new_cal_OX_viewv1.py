@@ -348,7 +348,10 @@ def main():
         st.plotly_chart(fig2b, use_container_width=True)
     
     
+    detect = comp.groupby(['Run_ID', 'Detection'])['Detection'].count().T
     
+    
+    print(detect)
     
     
     
@@ -357,30 +360,30 @@ def main():
     
     #print(ctrl_qc_table)   
     
-    def ctrl_view(testdf):
+    def ctrl_view(comp):
         
-        figdt = px.scatter(testdf, x='date_time', y='norm_N_Cov', color = 'Result')
-        figdt.update_yaxes(range=[0, 2.5])
+        figdt = px.scatter(comp, x='Run_ID', y='norm_N_Cov', color = 'Result')
+        figdt.update_yaxes(range=[0, 2      ])
         figdt.update_traces(marker_size=3)
         figdt.add_trace(go.Scatter(
             y=[1.3, 1.3],
-            x=[testdf.date_time.min(), testdf.date_time.max()],
+            x=[comp['Run_ID'].min(), comp['Run_ID'].max()],
             mode="lines+markers+text",
             name="Val mean",
             text=["Mean"],
             textposition="top center",
             line=dict(color="red", dash = 'dash')))
         figdt.add_trace(go.Scatter(
-            y=[13.5, 13.5],
-            x=[testdf.date_time.min(), testdf.date_time.max()],
+            y=[1.1, 1.1],
+            x=[comp['Run_ID'].min(), comp['Run_ID'].max()],
             mode="lines+markers+text",
             name="3SD low",
             text=["-3SD"],
             textposition="top center",
             line=dict(color="yellow", dash = 'dash')))
         figdt.add_trace(go.Scatter(
-            y=[15.2, 15.2],
-            x=[testdf.date_time.min(), testdf.date_time.max()],
+            y=[1.46, 1.46],
+            x=[comp['Run_ID'].min(), comp['Run_ID'].max()],
             mode="lines+markers+text",
             name="3SD high",
             text=["+3SD"],
@@ -398,13 +401,50 @@ def main():
     def Q75(x):
         return x.quantile(0.75)
     
-    
-    #def valid_array(df):
-     #   df = df.groupby('Run_ID')['ROX_RFU'].mean()
-      #  st.table(df)
+    def ROXCV(df1):
+        stats_ROX = df1.groupby(['Run_ID'])['ROX_RFU'].agg(['count', 'mean','std','min',Q25, Q50, Q75, 'max'])
+   
+        CI95_hi_ROX = []
+        CI95_lo_ROX = []
+        CV_run_ROX = []
+        for i in stats_ROX.index:
+            c,m,s,t,u,q1,q2,v =(stats_ROX.loc[i])
+            CI95_hi_ROX.append(m + 1.95*s/math.sqrt(c))
+            CI95_lo_ROX.append(m - 1.95*s/math.sqrt(c))
+            CV_run_ROX.append(s/m*100)
         
-    #valid_array(comp)    
+        stats_ROX['CI95% low ROX'] = CI95_lo_ROX
+        stats_ROX['CI95% hi ROX'] = CI95_hi_ROX
+        stats_ROX['ROX CV%'] = CV_run_ROX
+        stats_ROX = stats_ROX.reset_index()
+        return(stats_ROX)
+
+    stats_ROX = ROXCV(comp)
+  
     
+    def stats_FAM(df):
+        
+        df['FAM_RFU'] = df['FAM_RFU'].abs()
+        stats_FAM = df.groupby(['Run_ID','quad', 'Result'])['FAM_RFU'].agg(['count', 'mean','min', 'std', 'max'])
+        
+  
+        
+        CI95_hi_FAM = []
+        CI95_lo_FAM = []
+        CV_run_FAM = []
+  
+
+        for i in stats_FAM.index:
+            c,m,s,t,v =(stats_FAM.loc[i])
+            CI95_hi_FAM.append(m + 1.96*s/math.sqrt(c))
+            CI95_lo_FAM.append(m - 1.96*s/math.sqrt(c))
+            CV_run_FAM.append(100 - (s/m*100))
+    
+        stats_FAM['CI 95% low FAM'] = CI95_lo_FAM
+        stats_FAM['CI 95_hi_FAM'] = CI95_hi_FAM
+        stats_FAM['CV%_FAM'] = CV_run_FAM
+        #stats_nFAM['%Percent_detected'] = result['N1N2_detected'] / TOT*100
+        return(stats_FAM)
     
     def stats_nFAM(df):
         
@@ -429,7 +469,31 @@ def main():
         stats_nFAM['CV%_nFAM'] = CV_run_nFAM
         #stats_nFAM['%Percent_detected'] = result['N1N2_detected'] / TOT*100
         return(stats_nFAM)
+    
+    
+    def stats_CFO(df):
         
+        df['VIC_RFU'] = df['VIC_RFU'].abs()
+        stats_CFO = df.groupby(['Run_ID', 'quad', 'Result'])['VIC_RFU'].agg(['count', 'mean','min', 'std', 'max']).fillna('-')
+        
+  
+        
+        CI95_hi_CFO = []
+        CI95_lo_CFO = []
+        CV_run_CFO = []
+  
+
+        for i in stats_CFO.index:
+            c,m,s,t,v =(stats_CFO.loc[i])
+            CI95_hi_CFO.append(m + 1.96*s/math.sqrt(c))
+            CI95_lo_CFO.append(m - 1.96*s/math.sqrt(c))
+            CV_run_CFO.append(100 - (s/m*100))
+    
+        stats_CFO['CI 95% low CFO'] = CI95_lo_CFO
+        stats_CFO['CI 95_hi_CFO'] = CI95_hi_CFO
+        stats_CFO['CV%_CFO'] = CV_run_CFO
+        
+        return(stats_CFO)
         
     def stats_nCFO(df):
         
@@ -482,28 +546,43 @@ def main():
         cluster(comp)
         
     
-    st.subheader('Accuplex Control View - QC control data')
+    st.subheader('Detection performance against known mean and +/- 3D marker - Oxford')
     
-   
-
-
    
     testdf = comp[(comp.control == 'A1500')]
     
-    ctrl_view(testdf)
+    ctrl_view(comp)
     
+    
+    FAM_data = stats_FAM(comp)
+    CFO_data = stats_CFO(comp)
     nFAM_data = stats_nFAM(comp)
     nCFO_data = stats_nCFO(comp)
+    stats_ROX = ROXCV(comp)
     
+    st.dataframe(stats_ROX)
+    st.dataframe(FAM_data.astype(str))
+    st.dataframe(CFO_data.astype(str))
     st.dataframe(nFAM_data.astype(str))
     st.dataframe(nCFO_data.astype(str))
+   
     
-    
+    @st.cache
     def convert_df(df):
      # IMPORTANT: Cache the conversion to prevent computation on every rerun
         return df.to_csv().encode('utf-8')
 
     all_data = convert_df(comp)
+    
+    CFO = convert_df(CFO_data)
+         
+    nFAM = convert_df(nFAM_data)
+    
+    nCFO = convert_df(nCFO_data)
+    
+    ROX = convert_df(stats_ROX)
+    
+    FAM = convert_df(FAM_data)
 
     st.download_button(
         label="Download all data as CSV",
@@ -511,25 +590,45 @@ def main():
          file_name='araya_all_data_ox.csv',
          mime='text/csv')
          
-
     
-         
-    nFAM = convert_df(nFAM_data)
 
+    st.download_button(
+        label="Download FAM CSV",
+         data=FAM,
+         file_name='araya_ox_FAM_out.csv',
+         mime='text/csv')
+    
+    
+
+    st.download_button(
+        label="Download CFO CSV",
+         data=CFO,
+         file_name='araya_ox_CFO_out.csv',
+         mime='text/csv')
+    
+    
+    
     st.download_button(
         label="Download nFAM CSV",
          data=nFAM,
-         file_name='araya_ox_out.csv',
+         file_name='araya_ox_nFAM_out.csv',
          mime='text/csv')
     
-    nCFO = convert_df(nCFO_data)
+    
 
     st.download_button(
-        label="Download nFAM CSV",
+        label="Download nCFO CSV",
          data=nCFO,
-         file_name='araya_ox_out.csv',
+         file_name='araya_ox_nCFO_out.csv',
          mime='text/csv')
     
+    
+    
+    st.download_button(
+        label="Download ROX CSV",
+         data=ROX,
+         file_name='araya_ox_ROX_out.csv',
+         mime='text/csv')
     
     
     #st.dataframe(round(ctrl_qc_table),0)
