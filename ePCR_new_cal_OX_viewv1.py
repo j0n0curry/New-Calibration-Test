@@ -70,7 +70,7 @@ def main():
         comp['VIC_RFU'] = comp['VIC_RFU'].astype('float').astype('Int32')
         comp['ROX_RFU'] = comp['ROX_RFU'].astype('float').astype('Int32')
         comp['Run_ID'] = comp['Run_ID'].astype(int, errors = 'ignore')
-        comp.sort_values('Run_ID')
+        comp.sort_values('Run_ID', inplace = True)
         #will remove this function - to the bottom - allow files to be processed and user defined and downloaed as whole set and analysed sets. 
         
         #process file attributes in to parameters for QC. Essential information. 
