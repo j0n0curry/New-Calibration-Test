@@ -84,13 +84,20 @@ def main():
         print(comp.norm_RNaseP)
         comp.to_csv('test_out.csv')
         
-        
-        
         controls = {'P19': 'A1500', 'O19' : 'A1500', 'O20': 'A1500',
                         'P21': 'NEG', 'O21': 'NEG', 'O22': 'NEG',
                         'O23':'S06', 'P23':'S06', 'O24': 'S06'}
+        
+        comp['control'] = comp['Well'].map(controls).fillna('patient')
+    #stop all processig of app until files are uploaded
+    else:
+        st.warning('Please upload Araya files')
+        st.stop()    
+        
+        
+        
            
-        comp['control'] = comp['Well'].map(controls).fillna('paitent')
+       
       
     def valid_array(df):
         vdf = df.groupby('Run_ID')['ROX_RFU'].mean().reset_index()
@@ -110,8 +117,12 @@ def main():
             return('PLOD')
         elif row['norm_N_Cov'] > 1.0 and row['norm_RNaseP'] >= 0.2:
             return('N_Cov Paitent Positive')
+        elif row['norm_N_Cov'] > 1.4 and row['norm_RNaseP'] >= 0.2:
+            return('N_Cov Paitent Positive plus E')
         elif row['norm_N_Cov'] > 1.0 and row['norm_RNaseP']<= 0.2:
             return('Control_N_Cov')
+        elif row['norm_N_Cov'] > 1.4 and row['norm_RNaseP']<= 0.2:
+            return('Control_N_Cov_plus_E')
         elif row['norm_N_Cov'] <= 0.5 and row['norm_RNaseP'] <=0.2:
             return('No_Call')
         elif row['norm_N_Cov'] > 0.5 and row['norm_N_Cov'] <= 1.0 and row['norm_RNaseP'] <0.2:
