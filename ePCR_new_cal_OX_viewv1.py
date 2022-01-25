@@ -1,5 +1,3 @@
-
-
 import streamlit as st
 import os
 from io import BytesIO
@@ -17,7 +15,7 @@ st.set_page_config(layout="wide")
  
 
 
-version = 'New Cal - Oxford - v1.1 - alpha'
+version = 'New Cal - Oxford - v1.2 - alpha'
 
 def main():
     
@@ -31,7 +29,7 @@ def main():
 
     st.subheader("Upload Araya csv file directly for processing - either drag and drop or click to select files on your local machine")
     
-    
+    st.text("solved order issue, cutoff and scoring for Quadplex - analysis")
     
   
     
@@ -69,12 +67,15 @@ def main():
         comp['FAM_RFU'] = comp['FAM_RFU'].astype('float').astype('Int32')
         comp['VIC_RFU'] = comp['VIC_RFU'].astype('float').astype('Int32')
         comp['ROX_RFU'] = comp['ROX_RFU'].astype('float').astype('Int32')
+        comp['Well'] = comp['Row_ID']+comp['Col_ID']
+        comp['Col_ID'] = comp['Col_ID'].astype(int, errors = 'ignore')
         comp['Run_ID'] = comp['Run_ID'].astype(int, errors = 'ignore')
-        comp.sort_values('Run_ID', inplace = True)
+        
+        comp.sort_values(['Run_ID', 'Row_ID', 'Col_ID'], inplace = True)
         #will remove this function - to the bottom - allow files to be processed and user defined and downloaed as whole set and analysed sets. 
         
         #process file attributes in to parameters for QC. Essential information. 
-        comp['Well'] = comp['Row_ID']+comp['Col_ID']
+        
         comp['norm_RNaseP'] =  comp['VIC_RFU'].abs() / comp['ROX_RFU']
         comp['norm_N_Cov'] =  comp["FAM_RFU"]  / comp['ROX_RFU']
         comp.index.names=['order']
@@ -115,13 +116,13 @@ def main():
             return('Negative Patient')
         elif row['norm_N_Cov'] > 0.5 and row['norm_N_Cov'] <= 1.0 and row['norm_RNaseP'] >0.2:
             return('PLOD')
-        elif row['norm_N_Cov'] > 1.0 and row['norm_RNaseP'] >= 0.2:
+        elif row['norm_N_Cov'] > 1 and row['norm_N_Cov'] <= 1.5 and row['norm_RNaseP'] >= 0.2:
             return('N_Cov Paitent Positive')
-        elif row['norm_N_Cov'] > 1.4 and row['norm_RNaseP'] >= 0.2:
+        elif row['norm_N_Cov'] > 1.5 and row['norm_RNaseP'] >= 0.2:
             return('N_Cov Paitent Positive plus E')
-        elif row['norm_N_Cov'] > 1.0 and row['norm_RNaseP']<= 0.2:
+        elif row['norm_N_Cov'] > 1 and row['norm_N_Cov'] <= 1.5 and row['norm_RNaseP']<= 0.2:
             return('Control_N_Cov')
-        elif row['norm_N_Cov'] > 1.4 and row['norm_RNaseP']<= 0.2:
+        elif row['norm_N_Cov'] > 1.5 and row['norm_RNaseP']<= 0.2:
             return('Control_N_Cov_plus_E')
         elif row['norm_N_Cov'] <= 0.5 and row['norm_RNaseP'] <=0.2:
             return('No_Call')
@@ -196,10 +197,20 @@ def main():
             y=[1, 1],
             x=[comp.order.min(), comp.order.max()],
             mode="lines+markers+text",
-            name="Lower_1_Positive_Boundary",
+            name="Lower_2_hit_Positive_Boundary",
             text=["1"],
             textposition="top center",
             line=dict(color="red", dash = 'dash')
+            ))
+            
+        figN1.add_trace(go.Scatter(
+            y=[1.5, 1.5],
+            x=[comp.order.min(), comp.order.max()],
+            mode="lines+markers+text",
+            name="Lower_3_hit_Positive_Boundary",
+            text=["1.5"],
+            textposition="top center",
+            line=dict(color="green", dash = 'dash')
             ))
 
         figN1.update_traces(marker_size=3)
@@ -282,8 +293,8 @@ def main():
             textposition="top center",
             line=dict(color="Red", dash = 'dash')))
         fig3a.update_layout(title = 'ROX dispense processing ' + str(CT))
-        fig3a.update_traces(marker_size=3)
-        fig3a.update_yaxes(range=[4000, 12000])
+        fig3a.update_traces(marker_size=4)
+        fig3a.update_yaxes(range=[4000, 16000])
         
         st.plotly_chart(fig3a, use_container_width=True)
         
@@ -321,8 +332,8 @@ def main():
             textposition="top center",
             line=dict(color="Red", dash = 'dash')))
         fig3a.update_layout(title = 'ROX dispense processing ' + str(CT))
-        fig3a.update_traces(marker_size=3)
-        fig3a.update_yaxes(range=[4000, 12000])
+        fig3a.update_traces(marker_size=4)
+        fig3a.update_yaxes(range=[4000, 16000])
         
         st.plotly_chart(fig3a, use_container_width=True) 
     
@@ -336,9 +347,9 @@ def main():
         print(CT)
         
         figroxfam = px.scatter(comp, x= 'ROX_RFU', y = 'FAM_RFU' ,color = 'Result', title = 'N1 N2 detection Performance vs dispense')
-        figroxfam.update_traces(marker_size=3)
-        figroxfam.update_xaxes(range=[4000, 10000])
-        figroxfam.update_yaxes(range=[0, 20000])
+        figroxfam.update_traces(marker_size=4)
+        figroxfam.update_xaxes(range=[4000, 16000])
+        figroxfam.update_yaxes(range=[0, 30000])
 
 
         figroxfam.add_trace(go.Scatter(
@@ -357,12 +368,14 @@ def main():
         fig2b = px.scatter(comp, x= 'norm_RNaseP', y = 'norm_N_Cov',color = 'Result', title = 'Cluster Processing view')
         fig2b.update_xaxes(range=[0, 1])
         fig2b.update_yaxes(range=[0, 2])
-        fig2b.update_traces(marker_size=3)
+        fig2b.update_traces(marker_size=4)
         st.plotly_chart(fig2b, use_container_width=True)
     
     
     detect = comp.groupby(['Run_ID', 'Detection'])['Detection'].count()
     detect = detect.transpose()
+    
+    scored_sum = comp.groupby(['Result']).describe()
     
     
     
@@ -377,15 +390,15 @@ def main():
         
         comp['Run_ID'] = comp['Run_ID'].astype(str)
         figdt = px.scatter(comp, x='Run_ID', y='norm_N_Cov', color = 'Result')
-        figdt.update_yaxes(range=[0, 2      ])
-        figdt.update_traces(marker_size=3)
+        figdt.update_yaxes(range=[0, 2.5])
+        figdt.update_traces(marker_size=4)
         
         figdt.add_trace(go.Scatter(
             y=[1.3, 1.3],
             x=[comp['Run_ID'].min(), comp['Run_ID'].max()],
             mode="lines+markers+text",
             name="Val mean",
-            text=["Mean"],
+            text=["Mean_2hit"],
             textposition="top center",
             line=dict(color="red", dash = 'dash')))
         figdt.add_trace(go.Scatter(
@@ -393,17 +406,41 @@ def main():
             x=[comp['Run_ID'].min(), comp['Run_ID'].max()],
             mode="lines+markers+text",
             name="3SD low",
-            text=["-3SD"],
+            text=["2 hit -3SD"],
             textposition="top center",
-            line=dict(color="yellow", dash = 'dash')))
+            line=dict(color="grey", dash = 'dash')))
         figdt.add_trace(go.Scatter(
             y=[1.46, 1.46],
             x=[comp['Run_ID'].min(), comp['Run_ID'].max()],
             mode="lines+markers+text",
             name="3SD high",
-            text=["+3SD"],
+            text=["2 hit +3SD"],
             textposition="top center",
-            line=dict(color="yellow", dash = 'dash')))
+            line=dict(color="grey", dash = 'dash')))
+        figdt.add_trace(go.Scatter(
+            y=[1.84, 1.84],
+            x=[comp['Run_ID'].min(), comp['Run_ID'].max()],
+            mode="lines+markers+text",
+            name="Val mean",
+            text=["Mean_3 hit"],
+            textposition="top center",
+            line=dict(color="blue", dash = 'dash')))
+        figdt.add_trace(go.Scatter(
+            y=[2.02, 2.02],
+            x=[comp['Run_ID'].min(), comp['Run_ID'].max()],
+            mode="lines+markers+text",
+            name="3SD low",
+            text=["3 hit +3SD"],
+            textposition="top center",
+            line=dict(color="green", dash = 'dash')))
+        figdt.add_trace(go.Scatter(
+            y=[1.66, 1.66],
+            x=[comp['Run_ID'].min(), comp['Run_ID'].max()],
+            mode="lines+markers+text",
+            name="3SD high",
+            text=["3 hit -3SD"],
+            textposition="top center",
+            line=dict(color="green", dash = 'dash')))
         st.plotly_chart(figdt, use_container_width=True)
     
     #percentiles
@@ -564,7 +601,7 @@ def main():
     st.subheader('Detection performance against known mean and +/- 3D marker - Oxford')
     
    
-    testdf = comp[(comp.control == 'A1500')]
+    #testdf = comp[(comp.control == 'A1500')]
     
     ctrl_view(comp)
     
@@ -601,16 +638,34 @@ def main():
     ROX = convert_df(stats_ROX)
     
     FAM = convert_df(FAM_data)
+    
+    detected = convert_df(detect)
+    
+    score_out = convert_df(scored_sum)
+    
+    
+    st.sidebar.download_button(
+        label="Download Detect not detect CSV",
+         data=detected,
+         file_name='araya_ox_detect_out.csv',
+         mime='text/csv')
 
-    st.download_button(
+    st.sidebar.download_button(
         label="Download all data as CSV",
          data=all_data,
          file_name='araya_all_data_ox.csv',
          mime='text/csv')
          
-    
+         
+    st.sidebar.download_button(
+        label="Download score summary data as CSV",
+         data=score_out,
+         file_name='araya_score_summary_ox.csv',
+         mime='text/csv')
+         
+  
 
-    st.download_button(
+    st.sidebar.download_button(
         label="Download FAM CSV",
          data=FAM,
          file_name='araya_ox_FAM_out.csv',
@@ -618,7 +673,7 @@ def main():
     
     
 
-    st.download_button(
+    st.sidebar.download_button(
         label="Download CFO CSV",
          data=CFO,
          file_name='araya_ox_CFO_out.csv',
@@ -626,7 +681,7 @@ def main():
     
     
     
-    st.download_button(
+    st.sidebar.download_button(
         label="Download nFAM CSV",
          data=nFAM,
          file_name='araya_ox_nFAM_out.csv',
@@ -634,7 +689,7 @@ def main():
     
     
 
-    st.download_button(
+    st.sidebar.download_button(
         label="Download nCFO CSV",
          data=nCFO,
          file_name='araya_ox_nCFO_out.csv',
@@ -642,7 +697,7 @@ def main():
     
     
     
-    st.download_button(
+    st.sidebar.download_button(
         label="Download ROX CSV",
          data=ROX,
          file_name='araya_ox_ROX_out.csv',
