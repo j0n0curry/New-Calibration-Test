@@ -397,7 +397,7 @@ def main():
             y=[1.3, 1.3],
             x=[comp['Run_ID'].min(), comp['Run_ID'].max()],
             mode="lines+markers+text",
-            name="Val mean",
+            name="2 hit val mean",
             text=["Mean_2hit"],
             textposition="top center",
             line=dict(color="red", dash = 'dash')))
@@ -405,7 +405,7 @@ def main():
             y=[1.1, 1.1],
             x=[comp['Run_ID'].min(), comp['Run_ID'].max()],
             mode="lines+markers+text",
-            name="3SD low",
+            name="3SD 2 hit low",
             text=["2 hit -3SD"],
             textposition="top center",
             line=dict(color="grey", dash = 'dash')))
@@ -413,7 +413,7 @@ def main():
             y=[1.46, 1.46],
             x=[comp['Run_ID'].min(), comp['Run_ID'].max()],
             mode="lines+markers+text",
-            name="3SD high",
+            name="3SD 2 hit high",
             text=["2 hit +3SD"],
             textposition="top center",
             line=dict(color="grey", dash = 'dash')))
@@ -421,7 +421,7 @@ def main():
             y=[1.84, 1.84],
             x=[comp['Run_ID'].min(), comp['Run_ID'].max()],
             mode="lines+markers+text",
-            name="Val mean",
+            name="Val 3 hit mean",
             text=["Mean_3 hit"],
             textposition="top center",
             line=dict(color="blue", dash = 'dash')))
@@ -429,7 +429,7 @@ def main():
             y=[2.02, 2.02],
             x=[comp['Run_ID'].min(), comp['Run_ID'].max()],
             mode="lines+markers+text",
-            name="3SD low",
+            name="-3SD hit",
             text=["3 hit +3SD"],
             textposition="top center",
             line=dict(color="green", dash = 'dash')))
@@ -437,7 +437,7 @@ def main():
             y=[1.66, 1.66],
             x=[comp['Run_ID'].min(), comp['Run_ID'].max()],
             mode="lines+markers+text",
-            name="3SD high",
+            name="+3SD 3 hit",
             text=["3 hit -3SD"],
             textposition="top center",
             line=dict(color="green", dash = 'dash')))
