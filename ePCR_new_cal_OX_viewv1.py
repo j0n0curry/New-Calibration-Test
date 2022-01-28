@@ -410,7 +410,7 @@ def main():
             textposition="top center",
             line=dict(color="grey", dash = 'dash')))
         figdt.add_trace(go.Scatter(
-            y=[1.46, 1.46],
+            y=[1.3, 1.3],
             x=[comp['Run_ID'].min(), comp['Run_ID'].max()],
             mode="lines+markers+text",
             name="3SD 2 hit high",
