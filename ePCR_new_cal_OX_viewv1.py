@@ -394,7 +394,7 @@ def main():
         figdt.update_traces(marker_size=4)
         
         figdt.add_trace(go.Scatter(
-            y=[1.3, 1.3],
+            y=[1.2, 1.2],
             x=[comp['Run_ID'].min(), comp['Run_ID'].max()],
             mode="lines+markers+text",
             name="2 hit val mean",
