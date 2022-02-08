@@ -375,7 +375,7 @@ def main():
     detect = comp.groupby(['Run_ID', 'Detection'])['Detection'].count()
     detect = detect.transpose()
     
-    scored_sum = comp.groupby(['Result'])['FAM_RFU', 'VIC_RFU','ROX_RFU','norm_N_Cov', 'norm_RNAseP'].describe()
+    scored_sum = comp.groupby(['Result'])['FAM_RFU', 'VIC_RFU','ROX_RFU','norm_N_Cov', 'norm_RNaseP'].describe()
     
     
     
