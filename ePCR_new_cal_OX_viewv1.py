@@ -236,7 +236,7 @@ def main():
         
         fig1bbnbb = px.scatter(comp, x= 'order', y = 'norm_RNaseP', color = 'Result', title = 'normalised RNaseP processing view' )
         fig1bbnbb.update_traces(marker_size=3)
-        fig1bbnbb.update_yaxes(range=[0, 1])
+        fig1bbnbb.update_yaxes(range=[0, 2])
         fig1bbnbb.add_trace(go.Scatter(
             y=[0.2, 0.2],
             x=[comp.order.min(), comp.order.max()],
