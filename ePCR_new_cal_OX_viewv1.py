@@ -15,7 +15,7 @@ st.set_page_config(layout="wide")
  
 
 
-version = 'New Cal - Oxford - v1.2 - alpha'
+version = 'New Cal - Oxford - v1.3 - alpha'
 
 def main():
     
@@ -29,7 +29,7 @@ def main():
 
     st.subheader("Upload Araya csv file directly for processing - either drag and drop or click to select files on your local machine")
     
-    st.text("solved order issue, cutoff and scoring for Quadplex - analysis")
+    st.text("solved order issue, cutoff and scoring for Quadplex - analysis - no lower exclusion threshold for ROX at this time - was 1000 RFU - TBD")
     
   
     
@@ -108,7 +108,7 @@ def main():
         st.write('Arrays Exluded', str(vdf))
         return(df)    
         
-    comp=valid_array(comp)    
+    #comp=valid_array(comp)    
         
     def scoring(row):
     
