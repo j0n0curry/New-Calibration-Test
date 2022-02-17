@@ -15,7 +15,7 @@ st.set_page_config(layout="wide")
  
 
 
-version = 'New Cal - Oxford - v1.3 - alpha'
+version = 'New Cal - Oxford - v1.4 - alpha'
 
 def main():
     
@@ -112,7 +112,10 @@ def main():
         
     def scoring(row):
     
-        if row['norm_N_Cov'] < 0.5 and row['norm_RNaseP'] > 0.2:
+        
+        if row['norm_N_Cov'] < 0.5 and row['norm_RNaseP'] <0.4:
+            return('No_Call')
+        elif row['norm_N_Cov'] < 0.5 and row['norm_RNaseP'] > 0.2:
             return('Negative Patient')
         elif row['norm_N_Cov'] > 0.5 and row['norm_N_Cov'] <= 1.0 and row['norm_RNaseP'] >0.2:
             return('PLOD')
@@ -124,8 +127,6 @@ def main():
             return('Control_N_Cov')
         elif row['norm_N_Cov'] > 1.5 and row['norm_RNaseP']<= 0.2:
             return('Control_N_Cov_plus_E')
-        elif row['norm_N_Cov'] <= 0.5 and row['norm_RNaseP'] <=0.2:
-            return('No_Call')
         elif row['norm_N_Cov'] > 0.5 and row['norm_N_Cov'] <= 1.0 and row['norm_RNaseP'] <0.2:
             return'CTRL_PLOD'
         else:
