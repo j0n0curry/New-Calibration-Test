@@ -64,9 +64,9 @@ def main():
     if len(comp) > 0:
         #conversion of string to float in ArayaManager needed - test adding in a coersion function - as per below. 
         #coerce mixed float / int nummbers from somewhere. Add to Araya Manager a method coerce_numeric.
-        comp['FAM_RFU'] = comp['FAM_RFU'].astype('float').astype('Int32')
-        comp['VIC_RFU'] = comp['VIC_RFU'].astype('float').astype('Int32')
-        comp['ROX_RFU'] = comp['ROX_RFU'].astype('float').astype('Int32')
+        comp['FAM_RFU'] = comp['FAM_RFU'].astype('float').astype('Int32').abs()
+        comp['VIC_RFU'] = comp['VIC_RFU'].astype('float').astype('Int32').abs()
+        comp['ROX_RFU'] = comp['ROX_RFU'].astype('float').astype('Int32').abs()
         comp['Well'] = comp['Row_ID']+comp['Col_ID']
         comp['Col_ID'] = comp['Col_ID'].astype(int, errors = 'ignore')
         comp['Run_ID'] = comp['Run_ID'].astype(int, errors = 'ignore')
