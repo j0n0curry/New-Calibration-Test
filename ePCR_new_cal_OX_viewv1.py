@@ -143,7 +143,7 @@ def main():
     def hit_detect_neg(row):
         if row['norm_N_Cov'] >= 1.5:
             return('3-hit_detect')
-        elif row['norm_N_Cov'] >= 1 and < 1.5 :
+        elif row['norm_N_Cov'] >= 1 and row['norm_N_Cov'] < 1.5 :
             return('2-hit_detect')
         elif row['norm_N_Cov'] > 0.5 and row['norm_N_Cov'] <= 1.0:
             return('1-hit_detect')
