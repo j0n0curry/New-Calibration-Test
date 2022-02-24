@@ -140,7 +140,15 @@ def main():
         else:
             return('negative')
     
-         
+    def hit_detect_neg(row):
+        if row['norm_N_Cov'] >= 1.5:
+            return('3-hit_detect')
+        elif row['norm_N_Cov'] >= 1 and < 1.5 :
+            return('2-hit_detect')
+        elif row['norm_N_Cov'] > 0.5 and row['norm_N_Cov'] <= 1.0:
+            return('1-hit_detect')
+        else:
+            return('negative')     
     
     
     comp['Result'] = comp.apply(lambda row: scoring(row), axis = 1)   
