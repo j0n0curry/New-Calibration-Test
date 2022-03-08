@@ -123,9 +123,9 @@ def main():
             return('N_Cov Paitent Positive')
         elif row['norm_N_Cov'] > 1.5 and row['norm_RNaseP'] >= 0.2:
             return('N_Cov Paitent Positive plus E')
-        elif row['norm_N_Cov'] > 1 and row['norm_N_Cov'] <= 1.5 and row['norm_RNaseP']<0.4:
+        elif row['norm_N_Cov'] > 1 and row['norm_N_Cov'] <= 1.5 and row['norm_RNaseP']<=0.4:
             return('Control_N_Cov')
-        elif row['norm_N_Cov'] > 1.5 and row['norm_RNaseP']<= 0.3:
+        elif row['norm_N_Cov'] > 1.5 and row['norm_RNaseP']<= 0.4:
             return('Control_N_Cov_plus_E')
         elif row['norm_N_Cov'] > 0.5 and row['norm_N_Cov'] <= 1.0 and row['norm_RNaseP'] <0.3:
             return'CTRL_PLOD'
