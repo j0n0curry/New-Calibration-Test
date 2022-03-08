@@ -15,7 +15,7 @@ st.set_page_config(layout="wide")
  
 
 
-version = 'New Cal - Oxford - v1.4 - alpha'
+version = 'New Cal - Oxford - v1.5 - alpha'
 
 def main():
     
@@ -29,7 +29,7 @@ def main():
 
     st.subheader("Upload Araya csv file directly for processing - either drag and drop or click to select files on your local machine")
     
-    st.text("solved order issue, cutoff and scoring for Quadplex - analysis - no lower exclusion threshold for ROX at this time - was 1000 RFU - TBD")
+    st.text("solved order issue, cutoff and scoring for Quadplex - analysis)
     
   
     
@@ -625,10 +625,10 @@ def main():
     stats_ROX = ROXCV(comp)
     
     st.dataframe(stats_ROX)
-    st.dataframe(FAM_data.astype(str))
-    st.dataframe(CFO_data.astype(str))
-    st.dataframe(nFAM_data.astype(str))
-    st.dataframe(nCFO_data.astype(str))
+    #st.dataframe(FAM_data.astype(str))
+    #st.dataframe(CFO_data.astype(str))
+    #st.dataframe(nFAM_data.astype(str))
+    #st.dataframe(nCFO_data.astype(str))
    
     
     @st.cache
