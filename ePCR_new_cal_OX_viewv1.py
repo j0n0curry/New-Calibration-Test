@@ -29,7 +29,7 @@ def main():
 
     st.subheader("Upload Araya csv file directly for processing - either drag and drop or click to select files on your local machine")
     
-    st.text("solved order issue, cutoff and scoring for Quadplex - analysis)
+    st.text("solved order issue, cutoff and scoring for Quadplex - analysis")
     
   
     
