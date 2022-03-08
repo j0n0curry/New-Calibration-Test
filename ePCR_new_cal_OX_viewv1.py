@@ -123,11 +123,11 @@ def main():
             return('N_Cov Paitent Positive')
         elif row['norm_N_Cov'] > 1.5 and row['norm_RNaseP'] >= 0.2:
             return('N_Cov Paitent Positive plus E')
-        elif row['norm_N_Cov'] > 1 and row['norm_N_Cov'] <= 1.5 and row['norm_RNaseP']<= 0.3:
+        elif row['norm_N_Cov'] > 1 and row['norm_N_Cov'] <= 1.5 and row['norm_RNaseP']<0.4:
             return('Control_N_Cov')
-        elif row['norm_N_Cov'] > 1.5 and row['norm_RNaseP']<= 0.2:
+        elif row['norm_N_Cov'] > 1.5 and row['norm_RNaseP']<= 0.3:
             return('Control_N_Cov_plus_E')
-        elif row['norm_N_Cov'] > 0.5 and row['norm_N_Cov'] <= 1.0 and row['norm_RNaseP'] <0.2:
+        elif row['norm_N_Cov'] > 0.5 and row['norm_N_Cov'] <= 1.0 and row['norm_RNaseP'] <0.3:
             return'CTRL_PLOD'
         else:
             return('missing')
@@ -342,7 +342,7 @@ def main():
             line=dict(color="Red", dash = 'dash')))
         fig3a.update_layout(title = 'ROX dispense processing ' + str(CT))
         fig3a.update_traces(marker_size=4)
-        fig3a.update_yaxes(range=[4000, 16000])
+        fig3a.update_yaxes(range=[4000, 22000])
         
         st.plotly_chart(fig3a, use_container_width=True) 
     
@@ -375,7 +375,7 @@ def main():
     
     def cluster(comp):
         fig2b = px.scatter(comp, x= 'norm_RNaseP', y = 'norm_N_Cov',color = 'Result', title = 'Cluster Processing view')
-        fig2b.update_xaxes(range=[0, 1])
+        fig2b.update_xaxes(range=[0, 1.5])
         fig2b.update_yaxes(range=[0, 2])
         fig2b.update_traces(marker_size=4)
         st.plotly_chart(fig2b, use_container_width=True)
