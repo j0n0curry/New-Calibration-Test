@@ -148,11 +148,19 @@ def main():
         elif row['norm_N_Cov'] > 0.5 and row['norm_N_Cov'] <= 1.0:
             return('1-hit_detect')
         else:
-            return('negative')     
+            return('negative') 
+    def logit(row):
+        if row['Detection'] == 'Detected':
+            return(1)
+        else:
+            return(0)
+
+
     
     
     comp['Result'] = comp.apply(lambda row: scoring(row), axis = 1)   
     comp['Detection'] = comp.apply(lambda row: void_detect_neg(row), axis = 1)   
+    comp['logit_r'] = comp.apply(lambda row: logit(row),axis = 1) 
     
     quad_384 = {'A1':'QUAD 1','A2':'QUAD 2','A3':'QUAD 1','A4':'QUAD 2','A5':'QUAD 1','A6':'QUAD 2','A7':'QUAD 1','A8':'QUAD 2','A9':'QUAD 1','A10':'QUAD 2','A11':'QUAD 1','A12':'QUAD 2','A13':'QUAD 1','A14':'QUAD 2','A15':'QUAD 1','A16':'QUAD 2','A17':'QUAD 1','A18':'QUAD 2','A19':'QUAD 1','A20':'QUAD 2','A21':'QUAD 1','A22':'QUAD 2','A23':'QUAD 1','A24':'QUAD 2',
                 'B1':'QUAD 3','B2':'QUAD 4','B3':'QUAD 3','B4':'QUAD 4','B5':'QUAD 3','B6':'QUAD 4','B7':'QUAD 3','B8':'QUAD 4','B9':'QUAD 3','B10':'QUAD 4','B11':'QUAD 3','B12':'QUAD 4','B13':'QUAD 3','B14':'QUAD 4','B15':'QUAD 3','B16':'QUAD 4','B17':'QUAD 3','B18':'QUAD 4','B19':'QUAD 3','B20':'QUAD 4','B21':'QUAD 3','B22':'QUAD 4','B23':'QUAD 3','B24':'QUAD 4',
