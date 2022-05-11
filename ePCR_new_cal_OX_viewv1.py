@@ -255,11 +255,11 @@ def main():
         fig1bbnbb.update_traces(marker_size=3)
         fig1bbnbb.update_yaxes(range=[0, 2])
         fig1bbnbb.add_trace(go.Scatter(
-            y=[0.4, 0.4],
+            y=[0.2, 0.2],
             x=[comp.order.min(), comp.order.max()],
             mode="lines+markers+text",
             name="Lower_0.2_RP Detected_Boundary",
-            text=["0.4"],
+            text=["0.2"],
             textposition="top center",
             line=dict(color="red", dash = 'dash')))
         #fig1bbnbb.add_trace(go.Scatter(
